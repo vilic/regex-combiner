@@ -10,8 +10,10 @@
         JavaScript RegExp Combiner
     </h1>
     <div id="input-wrapper">
-        <pre id="regex-bg"></pre>
-        <textarea id="regex-input" spellcheck="false" placeholder="Separate multiple regular expressions by line..."></textarea>
+        <div id="input-inner-wrapper">
+            <pre id="regex-bg"></pre>
+            <textarea id="regex-input" spellcheck="false" placeholder="Separate multiple regular expressions by lines..."></textarea>
+        </div>
     </div>
     <pre id="error-output"></pre>
     <div id="output-wrapper">
@@ -81,6 +83,8 @@
             onregexchange();
         };
 
+        window.onresize = resizeInput;
+
         onregexchange();
 
         function onregexchange() {
@@ -100,7 +104,7 @@
                     return '<div class="regex">' + text + '</div>';
                 }).join('');
 
-            regexInput.style.height = regexBg.offsetHeight + 'px';
+            resizeInput();
 
             try {
                 var combined = RegexCombiner.combine(regexStrs);
@@ -116,6 +120,10 @@
             }
 
             RegexColorizer.colorizeAll('regex');
+        }
+
+        function resizeInput() {
+            regexInput.style.height = regexBg.offsetHeight + 'px';
         }
 
         function blurThis() {

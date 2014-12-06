@@ -25,12 +25,12 @@ h1 a {
 }
 
 #input-wrapper {
-    position: relative;
     border: solid 1px #ccc;
     padding: 10px;
-    -moz-box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-    box-sizing: content-box;
+}
+
+#input-inner-wrapper {
+    position: relative;
 }
 
 #regex-bg, #regex-input {
@@ -44,6 +44,8 @@ h1 a {
 #regex-bg {
     position: absolute;
     color: transparent;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 #regex-input {
