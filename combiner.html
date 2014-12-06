@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>JavaScript RegExp Combiner</title>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>
+        <a href="https://github.com/vilic/regex-combiner">GitHub</a>
+        JavaScript RegExp Combiner
+    </h1>
+    <div id="input-wrapper">
+        <pre id="regex-bg"></pre>
+        <textarea id="regex-input" spellcheck="false" placeholder="Separate multiple regular expressions by line..."></textarea>
+    </div>
+    <pre id="error-output"></pre>
+    <div id="output-wrapper">
+        <h3>
+            <label><input id="regex-literal-checkbox" type="checkbox" /> regex literal</label>
+            Combined
+        </h3>
+        <pre id="combined-output"></pre>
+        <h3>
+            <label><input id="typescript-checkbox" type="checkbox" /> typescript</label>
+            Function Parameters
+        </h3>
+        <pre id="function-output"></pre>
+        <h3>Group Array Alias</h3>
+        <pre id="array-output"></pre>
+    </div>
+    <div id="usage-wrapper">
+        <h2>Usage</h2>
+        <p>Write muliple regular expressions line by line. This tool will automatically handle back reference index. E.g.:</p>
+        <blockquote>
+            (abc)<br />
+            (["'])...\1
+        </blockquote>
+        <p>\1 above will be changed to \2 and result in a combined regular expression /(abc)|(["'])...\2/.</p>
+        <p>You may also use named group, e.g.:</p>
+        <blockquote>
+            ($quote:["'])...($quote)
+        </blockquote>
+        <p>will be convert to /(["'])...\1/.</p>
+    </div>
+    <script src="regex-colorizer.js"></script>
+    <script src="combiner.js"></script>
+    <script>
+
+        var regexInput = document.getElementById('regex-input');
+        var regexBg = document.getElementById('regex-bg');
+        var errorOutput = document.getElementById('error-output');
+        var outputWrapper = document.getElementById('output-wrapper');
+        var combinedOutput = document.getElementById('combined-output');
+        var functionOutput = document.getElementById('function-output');
+        var arrayOutput = document.getElementById('array-output');
+
+        regexInput.onchange = onregexchange;
+        regexInput.onpaste = onregexchange;
+        regexInput.oninput = onregexchange;
+
+        var regexLiteralCheckBox = document.getElementById('regex-literal-checkbox');
+        var typescriptCheckBox = document.getElementById('typescript-checkbox');
+
+        regexLiteralCheckBox.checked =
+            localStorage.regexLiteralChecked == undefined ||
+            localStorage.regexLiteralChecked == 'true';
+        typescriptCheckBox.checked = localStorage.typescriptChecked == 'true';
+
+        regexLiteralCheckBox.onclick = blurThis;
+        regexLiteralCheckBox.onkeypress = blurThis;
+        typescriptCheckBox.onclick = blurThis;
+        typescriptCheckBox.onkeypress = blurThis;
+
+        regexLiteralCheckBox.onchange = function () {
+            localStorage.regexLiteralChecked = this.checked;
+            onregexchange();
+        };
+
+        typescriptCheckBox.onchange = function () {
+            localStorage.typescriptChecked = this.checked;
+            onregexchange();
+        };
+
+        onregexchange();
+
+        function onregexchange() {
+            var regexStrs = regexBg.innerHTML = regexInput.value
+                .split('\n')
+                .map(function (str) {
+                    return str.trim();
+                });
+
+            regexBg.innerHTML = regexStrs
+                .map(function (text) {
+                    text = text
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;') ||
+                        '&nbsp;';
+                    return '<div class="regex">' + text + '</div>';
+                }).join('');
+
+            regexInput.style.height = regexBg.offsetHeight + 'px';
+
+            try {
+                var combined = RegexCombiner.combine(regexStrs);
+                combinedOutput.innerText = (regexLiteralCheckBox.checked ? combined.literal : combined.string) || ' ';
+                functionOutput.innerHTML = (typescriptCheckBox.checked ? combined.tFnParams : combined.fnParams) || '&nbsp;';
+                arrayOutput.innerHTML = combined.arrayAlias || '&nbsp;';
+                errorOutput.innerText = '';
+            } catch (e) {
+                errorOutput.innerText = e.message;
+                combinedOutput.innerHTML = '&nbsp;';
+                functionOutput.innerHTML = '&nbsp;';
+                arrayOutput.innerHTML = '&nbsp;';
+            }
+
+            RegexColorizer.colorizeAll('regex');
+        }
+
+        function blurThis() {
+            this.blur();
+        }
+
+    </script>
+</body>
+</html>
