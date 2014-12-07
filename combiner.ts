@@ -66,6 +66,10 @@ module RegexCombiner {
                         }
 
                         if (groupNameColon) {
+                            if (hop.call(groupNameToIndex, groupName)) { 
+                                throw new Error('Duplicate group name "' + groupName + '" in regex #' + regexIndex);
+                            }
+
                             bracketDepth++;
                             partialGroupCount++;
                             groupNameToIndex[groupName] = groupCount + partialGroupCount;

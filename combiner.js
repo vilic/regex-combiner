@@ -34,6 +34,9 @@ var RegexCombiner;
                         throw new Error('Group name can not be in a characer class in regex #' + regexIndex);
                     }
                     if (groupNameColon) {
+                        if (hop.call(groupNameToIndex, groupName)) {
+                            throw new Error('Duplicate group name "' + groupName + '" in regex #' + regexIndex);
+                        }
                         bracketDepth++;
                         partialGroupCount++;
                         groupNameToIndex[groupName] = groupCount + partialGroupCount;

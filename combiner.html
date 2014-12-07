@@ -56,6 +56,8 @@
         var functionOutput = document.getElementById('function-output');
         var arrayOutput = document.getElementById('array-output');
 
+        regexInput.value = localStorage.inputValue || '';
+
         regexInput.onchange = onregexchange;
         regexInput.onpaste = onregexchange;
         regexInput.oninput = onregexchange;
@@ -88,7 +90,11 @@
         onregexchange();
 
         function onregexchange() {
-            var regexStrs = regexBg.innerHTML = regexInput.value
+            var inputValue = regexInput.value;
+
+            localStorage.inputValue = inputValue;
+
+            var regexStrs = regexBg.innerHTML = inputValue
                 .split('\n')
                 .map(function (str) {
                     return str.trim();
@@ -101,7 +107,7 @@
                         .replace(/</g, '&lt;')
                         .replace(/>/g, '&gt;') ||
                         '&nbsp;';
-                    return '<div class="regex">' + text + '</div>';
+                    return '<div class="line-indicator"></div><div class="regex">' + text + '</div>';
                 }).join('');
 
             resizeInput();
