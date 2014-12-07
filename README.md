@@ -15,4 +15,4 @@ You may also use named group, e.g.:
 
     ($quote:["'])...($quote)
 
-will be convert to /(["'])...\1/.
+will be converted to /(["'])...\1/.
