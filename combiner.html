@@ -105,15 +105,16 @@
                     text = text
                         .replace(/&/g, '&amp;')
                         .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;') ||
-                        '&nbsp;';
-                    return '<div class="line-indicator"></div><div class="regex">' + text + '</div>';
+                        .replace(/>/g, '&gt;');
+                    return (text ? '<div class="line-indicator"></div>' : '') + '<div class="regex">' + (text || '&nbsp;') + '</div>';
                 }).join('');
 
             resizeInput();
 
             try {
-                var combined = RegexCombiner.combine(regexStrs);
+                var combined = RegexCombiner.combine(regexStrs.filter(function (str) {
+                    return !!str;
+                }));
                 combinedOutput.innerText = (regexLiteralCheckBox.checked ? combined.literal : combined.string) || ' ';
                 functionOutput.innerHTML = (typescriptCheckBox.checked ? combined.tFnParams : combined.fnParams) || '&nbsp;';
                 arrayOutput.innerHTML = combined.arrayAlias || '&nbsp;';
